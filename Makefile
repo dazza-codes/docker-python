@@ -44,5 +44,6 @@ shell: build
 	docker run --rm -it $(IMAGE) /bin/bash
 
 push: build
+	docker login docker.io
 	docker push darrenleeweber/docker-python-3.6:$(VERSION)
 
