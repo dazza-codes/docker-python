@@ -1,18 +1,10 @@
-# for docker in docker
+# for docker in docker support, use docker:19.03, based on alpine:3.11
 # https://github.com/docker-library/docker/blob/master/19.03
-FROM docker:19.03.6
+#
+# for python, this is adapted from Dockerfile-alpine.template in
+# https://github.com/docker-library/python/
 
-# python 3.6 on alpine:3.11
-# https://github.com/docker-library/python/tree/master/3.6
-# FROM python:3.6-alpine
-#
-# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
-#
-# PLEASE DO NOT EDIT IT DIRECTLY.
-#
-
-# docker:19.03 is based on alpine:3.11 already
-# FROM alpine:3.11
+FROM docker:%%PLACEHOLDER%%
 
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
@@ -25,8 +17,8 @@ ENV LANG C.UTF-8
 # other runtime dependencies for Python are installed later
 RUN apk add --no-cache ca-certificates
 
-ENV GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
-ENV PYTHON_VERSION 3.6.10
+ENV GPG_KEY %%PLACEHOLDER%%
+ENV PYTHON_VERSION %%PLACEHOLDER%%
 
 RUN set -ex \
 	&& apk add --no-cache --virtual .fetch-deps \
@@ -68,6 +60,7 @@ RUN set -ex \
 		tcl-dev \
 		tk \
 		tk-dev \
+		util-linux-dev \
 		xz-dev \
 		zlib-dev \
 # add build deps before removing fetch deps in case there's overlap
@@ -89,7 +82,7 @@ RUN set -ex \
 # https://github.com/alpinelinux/aports/commit/2026e1259422d4e0cf92391ca2d3844356c649d0
 		EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000" \
 # setting PROFILE_TASK makes "--enable-optimizations" reasonable: https://bugs.python.org/issue36044 / https://github.com/docker-library/python/issues/160#issuecomment-509426916
-# test_threading removed, it hangs
+# test_threading removed, it hangs the build
 		PROFILE_TASK='-m test.regrtest --pgo \
 			test_array \
 			test_base64 \
@@ -151,10 +144,10 @@ RUN cd /usr/local/bin \
 	&& ln -s python3-config python-config
 
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 20.0.2
+ENV PYTHON_PIP_VERSION %%PLACEHOLDER%%
 # https://github.com/pypa/get-pip
-ENV PYTHON_GET_PIP_URL https://github.com/pypa/get-pip/raw/d59197a3c169cef378a22428a3fa99d33e080a5d/get-pip.py
-ENV PYTHON_GET_PIP_SHA256 421ac1d44c0cf9730a088e337867d974b91bdce4ea2636099275071878cc189e
+ENV PYTHON_GET_PIP_URL %%PLACEHOLDER%%
+ENV PYTHON_GET_PIP_SHA256 %%PLACEHOLDER%%
 
 RUN set -ex; \
 	\

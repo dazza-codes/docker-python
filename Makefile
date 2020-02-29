@@ -6,18 +6,12 @@ SHELL = /bin/bash
 
 VERSION = latest
 
-IMAGE = darrenleeweber/docker-python-3.6
+DOCKER_VER = docker19.03
+PY_VER ?= 3.6
 
-.PHONY: git-version build clean history run shell push
+IMAGE = dazzacodes/docker-python
 
-git-version:
-	git remote -v > version
-	git log -n1 --pretty=format:'%h - %d %s <%an>' >> version
-	echo >> version
-
-build: git-version
-	docker build -t $(IMAGE) .
-	rm version
+.PHONY: build clean history run shell push update
 
 # Auto-clean is disabled by leaving the value empty
 AUTOCLEAN ?= 
@@ -37,13 +31,18 @@ clean:
 history: build
 	docker history $(IMAGE)
 
+update:
+	./update.sh
+
+build:
+	docker build -f "$(PY_VER)/$(DOCKER_VER)/Dockerfile" -t $(IMAGE):$(PY_VER) .
+
 run: build
-	docker run --rm -it $(IMAGE)
+	docker run --rm -it $(IMAGE):$(PY_VER)
 
 shell: build
-	docker run --rm -it $(IMAGE) /bin/bash
+	docker run --rm -it $(IMAGE):$(PY_VER) /bin/bash
 
 push: build
 	docker login docker.io
-	docker push darrenleeweber/docker-python-3.6:$(VERSION)
-
+	docker push $(IMAGE):$(PY_VER)
