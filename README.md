@@ -1,19 +1,27 @@
 # docker-python
 
-This project is motivated by trying to use docker-in-docker
-for gitlab-CI that runs python test suites where something
-needs a docker container/service.
+This project is motivated by trying to use docker-in-docker for gitlab-CI
+that runs python test suites where something needs a docker
+container/service.
 
-THIS IS NOT AN OFFICIAL DOCKER or PYTHON repository and
-NO SUPPORT will be provided and issues might not get any
-attention.  See the links below for official projects.
-Feel free to use this repository to push changes upstream
-to official projects - it's all Apache-2.0; if the
-approaches in this repository are pushed upstream, it
-should die a natural deprecation.  If you need changes,
-review the links below and fork it to do it yourself;
-PRs are welcome but don't expect anything to change in
-a timely manner.
+THIS IS NOT AN OFFICIAL DOCKER or PYTHON repository and NO SUPPORT will be
+provided and issues might not get any attention. See the links below for
+official projects. Feel free to use this repository to push changes upstream
+to official projects - it's all Apache-2.0; if the approaches in this
+repository are pushed upstream, it should die a natural deprecation. If you
+need changes, review the links below and fork it to do it yourself; PRs are
+welcome but don't expect anything to change in a timely manner.
+
+In the builds of this project, the build-deps are kept in the image so that
+python libraries can easily build wheels when needed. Many users of alpine
+want smaller images, but at the expense of convencience for python packages
+that build wheels. If your looking for a small python image, this might not
+be for you.
+
+**When using a docker image from this project, DO NOT `apk add python3`. Also
+understand that any use of `apk add py3-*` could be broken. If all you want is
+to use `python3` on an alpine based docker container, DO NOT use this project,
+use the latest python provided by `apk add python3`.**
 
 ## Approach
 
@@ -47,6 +55,17 @@ PY_VER=3.6 make shell
 # python
 >>> import random
 >>> random.uniform(1,10)
+```
+
+In the builds of this project, the build-deps are kept in the image so
+that python libraries can easily build wheels when needed.  Many users
+of alpine want smaller images, but at the expense of convencience for
+python packages that build wheels.  If your looking for a small python
+image, this might not be for you. For a more demanding test that needs
+some build-deps, try:
+
+```text
+pip install cffi
 ```
 
 If it looks OK, it could get pushed to DockerHub (requires a manual login):

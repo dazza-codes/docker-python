@@ -68,9 +68,6 @@ RUN set -ex \
 		tk-dev \
 		xz-dev \
 		zlib-dev \
-# add build deps before removing fetch deps in case there's overlap
-	&& apk del --no-network .fetch-deps \
-	\
 	&& cd /usr/src/python \
 	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
 	&& ./configure \
@@ -129,7 +126,9 @@ RUN set -ex \
 		| sort -u \
 		| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 		| xargs -rt apk add --no-cache --virtual .python-rundeps \
-	&& apk del --no-network .build-deps \
+# leave fetch and build deps for python libs that need to build stuff
+# && apk del --no-network .fetch-deps \
+# && apk del --no-network .build-deps \
 	\
 	&& find /usr/local -depth \
 		\( \
